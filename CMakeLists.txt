@@ -79,14 +79,15 @@ if (BUILD_TEASER_FPFH)
 endif ()
 
 # googletest
-configure_file(cmake/GoogleTest.CMakeLists.txt.in googletest-download/CMakeLists.txt)
-execute_process(COMMAND "${CMAKE_COMMAND}" -G "${CMAKE_GENERATOR}" .
-        WORKING_DIRECTORY "${CMAKE_BINARY_DIR}/googletest-download")
-execute_process(COMMAND "${CMAKE_COMMAND}" --build .
-        WORKING_DIRECTORY "${CMAKE_BINARY_DIR}/googletest-download")
-set(gtest_force_shared_crt ON CACHE BOOL "" FORCE)
-add_subdirectory("${CMAKE_BINARY_DIR}/googletest-src"
-        "${CMAKE_BINARY_DIR}/googletest-build" EXCLUDE_FROM_ALL)
+if (BUILD_TESTS)
+        include(FetchContent)
+        FetchContent_Declare(
+                googletest
+                URL https://github.com/google/googletest/releases/download/v1.16.0/googletest-1.16.0.tar.gz
+        )
+        set(gtest_force_shared_crt ON CACHE BOOL "" FORCE)
+        FetchContent_MakeAvailable(googletest)
+endif ()
 
 # pmc (Parallel Maximum Clique)
 configure_file(cmake/pmc.CMakeLists.txt.in pmc-download/CMakeLists.txt)
