@@ -78,9 +78,10 @@ if (BUILD_TEASER_FPFH)
     endif()
 endif ()
 
+include(FetchContent)
+
 # googletest
 if (BUILD_TESTS)
-        include(FetchContent)
         FetchContent_Declare(
                 googletest
                 URL https://github.com/google/googletest/releases/download/v1.16.0/googletest-1.16.0.tar.gz
@@ -90,13 +91,12 @@ if (BUILD_TESTS)
 endif ()
 
 # pmc (Parallel Maximum Clique)
-configure_file(cmake/pmc.CMakeLists.txt.in pmc-download/CMakeLists.txt)
-execute_process(COMMAND "${CMAKE_COMMAND}" -G "${CMAKE_GENERATOR}" .
-        WORKING_DIRECTORY "${CMAKE_BINARY_DIR}/pmc-download")
-execute_process(COMMAND "${CMAKE_COMMAND}" --build .
-        WORKING_DIRECTORY "${CMAKE_BINARY_DIR}/pmc-download")
-add_subdirectory("${CMAKE_BINARY_DIR}/pmc-src"
-        "${CMAKE_BINARY_DIR}/pmc-build")
+FetchContent_Declare(
+        pmc
+        GIT_REPOSITORY https://github.com/young-seoulrobotics/pmc.git
+        GIT_TAG ca31ac592f9e2eba10b499dc3b22fc5dd2f19ca2
+)
+FetchContent_MakeAvailable(pmc)
 
 # tinyply
 configure_file(cmake/tinyply.CMakeLists.txt.in tinyply-download/CMakeLists.txt)
