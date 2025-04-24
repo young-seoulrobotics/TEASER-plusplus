@@ -9,9 +9,7 @@
 #include "teaser/graph.h"
 #include "pmc/pmc.h"
 
-using namespace std;
-
-vector<int> teaser::MaxCliqueSolver::findMaxClique(teaser::Graph graph) {
+std::vector<int> teaser::MaxCliqueSolver::findMaxClique(teaser::Graph graph) {
 
   // Handle deprecated field
   if (!params_.solve_exactly) {
@@ -19,8 +17,8 @@ vector<int> teaser::MaxCliqueSolver::findMaxClique(teaser::Graph graph) {
   }
 
   // Create a PMC graph from the TEASER graph
-  vector<int> edges;
-  vector<long long> vertices;
+  std::vector<int> edges;
+  std::vector<long long> vertices;
   vertices.push_back(edges.size());
 
   const auto all_vertices = graph.getVertices();
@@ -53,8 +51,8 @@ vector<int> teaser::MaxCliqueSolver::findMaxClique(teaser::Graph graph) {
   in.heu_strat = "kcore";
   in.vertex_search_order = "deg";
 
-  // vector to represent max clique
-  vector<int> C;
+  // std::vector to represent max clique
+  std::vector<int> C;
 
   // upper-bound of max clique
   G.compute_cores();
@@ -71,7 +69,7 @@ vector<int> teaser::MaxCliqueSolver::findMaxClique(teaser::Graph graph) {
                                   static_cast<double>(all_vertices.size()))) {
     TEASER_DEBUG_INFO_MSG("Using K-core heuristic finder.");
     // remove all nodes with core number less than max core number
-    // k_cores is a vector saving the core number of each vertex
+    // k_cores is a std::vector saving the core number of each vertex
     auto k_cores = G.get_kcores();
     for (int i = 1; i < k_cores->size(); ++i) {
       // Note: k_core has size equals to num vertices + 1
