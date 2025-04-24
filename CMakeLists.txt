@@ -94,7 +94,7 @@ endif ()
 FetchContent_Declare(
         pmc
         GIT_REPOSITORY https://github.com/young-seoulrobotics/pmc.git
-        GIT_TAG ca31ac592f9e2eba10b499dc3b22fc5dd2f19ca2
+        GIT_TAG 42d5c87c3fff6dc1fcdbd4bbcd2fee4384bb7a99
 )
 FetchContent_MakeAvailable(pmc)
 
