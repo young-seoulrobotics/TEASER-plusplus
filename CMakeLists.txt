@@ -153,6 +153,27 @@ endif ()
 # export targets
 export(TARGETS ${TEASERPP_EXPORTED_TARGETS} FILE teaserpp-exports.cmake)
 
+set(TEASERPP_CMAKE_DIR ${CMAKE_INSTALL_LIBDIR}/cmake/teaserpp)
+
 install(FILES cmake/teaserppConfig.cmake
-        DESTINATION ${CMAKE_INSTALL_LIBDIR}/cmake/teaserpp
-        )
+        DESTINATION ${TEASERPP_CMAKE_DIR}
+)
+
+include(CMakePackageConfigHelpers)
+configure_package_config_file(
+        ${CMAKE_CURRENT_SOURCE_DIR}/cmake/teaserppConfig.cmake
+        teaserppConfig.cmake
+        INSTALL_DESTINATION ${TEASERPP_CMAKE_DIR}
+)
+
+write_basic_package_version_file(
+        teaserppConfigVersion.cmake
+        COMPATIBILITY SameMinorVersion
+)
+
+install(
+        FILES
+                ${CMAKE_CURRENT_BINARY_DIR}/teaserppConfig.cmake
+                ${CMAKE_CURRENT_BINARY_DIR}/teaserppConfigVersion.cmake
+        DESTINATION ${TEASERPP_CMAKE_DIR}
+)
