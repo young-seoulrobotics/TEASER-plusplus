@@ -93,8 +93,7 @@ endif ()
 # pmc (Parallel Maximum Clique)
 FetchContent_Declare(
         pmc
-        GIT_REPOSITORY https://github.com/young-seoulrobotics/pmc.git
-        GIT_TAG 839f8b9882ede642b21b06f82ed0da849ead93c3
+        URL https://github.com/young-seoulrobotics/pmc/archive/refs/tags/v1.0-sr.tar.gz
 )
 FetchContent_MakeAvailable(pmc)
 
