@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 3.10)
+cmake_minimum_required(VERSION 3.11)
 project(teaserpp VERSION 1.0.0)
 
 set(CMAKE_CXX_STANDARD 14)
@@ -78,24 +78,24 @@ if (BUILD_TEASER_FPFH)
     endif()
 endif ()
 
+include(FetchContent)
+
 # googletest
-configure_file(cmake/GoogleTest.CMakeLists.txt.in googletest-download/CMakeLists.txt)
-execute_process(COMMAND "${CMAKE_COMMAND}" -G "${CMAKE_GENERATOR}" .
-        WORKING_DIRECTORY "${CMAKE_BINARY_DIR}/googletest-download")
-execute_process(COMMAND "${CMAKE_COMMAND}" --build .
-        WORKING_DIRECTORY "${CMAKE_BINARY_DIR}/googletest-download")
-set(gtest_force_shared_crt ON CACHE BOOL "" FORCE)
-add_subdirectory("${CMAKE_BINARY_DIR}/googletest-src"
-        "${CMAKE_BINARY_DIR}/googletest-build" EXCLUDE_FROM_ALL)
+if (BUILD_TESTS)
+        FetchContent_Declare(
+                googletest
+                URL https://github.com/google/googletest/releases/download/v1.16.0/googletest-1.16.0.tar.gz
+        )
+        set(gtest_force_shared_crt ON CACHE BOOL "" FORCE)
+        FetchContent_MakeAvailable(googletest)
+endif ()
 
 # pmc (Parallel Maximum Clique)
-configure_file(cmake/pmc.CMakeLists.txt.in pmc-download/CMakeLists.txt)
-execute_process(COMMAND "${CMAKE_COMMAND}" -G "${CMAKE_GENERATOR}" .
-        WORKING_DIRECTORY "${CMAKE_BINARY_DIR}/pmc-download")
-execute_process(COMMAND "${CMAKE_COMMAND}" --build .
-        WORKING_DIRECTORY "${CMAKE_BINARY_DIR}/pmc-download")
-add_subdirectory("${CMAKE_BINARY_DIR}/pmc-src"
-        "${CMAKE_BINARY_DIR}/pmc-build")
+FetchContent_Declare(
+        pmc
+        URL https://github.com/young-seoulrobotics/pmc/archive/refs/tags/v1.0-sr.tar.gz
+)
+FetchContent_MakeAvailable(pmc)
 
 # tinyply
 configure_file(cmake/tinyply.CMakeLists.txt.in tinyply-download/CMakeLists.txt)
@@ -153,6 +153,27 @@ endif ()
 # export targets
 export(TARGETS ${TEASERPP_EXPORTED_TARGETS} FILE teaserpp-exports.cmake)
 
+set(TEASERPP_CMAKE_DIR ${CMAKE_INSTALL_LIBDIR}/cmake/teaserpp)
+
 install(FILES cmake/teaserppConfig.cmake
-        DESTINATION ${CMAKE_INSTALL_LIBDIR}/cmake/teaserpp
-        )
+        DESTINATION ${TEASERPP_CMAKE_DIR}
+)
+
+include(CMakePackageConfigHelpers)
+configure_package_config_file(
+        ${CMAKE_CURRENT_SOURCE_DIR}/cmake/teaserppConfig.cmake
+        teaserppConfig.cmake
+        INSTALL_DESTINATION ${TEASERPP_CMAKE_DIR}
+)
+
+write_basic_package_version_file(
+        teaserppConfigVersion.cmake
+        COMPATIBILITY SameMinorVersion
+)
+
+install(
+        FILES
+                ${CMAKE_CURRENT_BINARY_DIR}/teaserppConfig.cmake
+                ${CMAKE_CURRENT_BINARY_DIR}/teaserppConfigVersion.cmake
+        DESTINATION ${TEASERPP_CMAKE_DIR}
+)
