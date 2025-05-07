@@ -37,11 +37,6 @@ add_library(teaser_registration SHARED
         src/graph.cc
         )
 
-SET_TARGET_PROPERTIES(teaser_registration
-    PROPERTIES
-    INSTALL_RPATH "$ORIGIN;$ORIGIN/../pmc-build"
-    BUILD_WITH_INSTALL_RPATH TRUE
-)
 target_link_libraries(teaser_registration
         PUBLIC Eigen3::Eigen
         PRIVATE pmc ${TEASERPP_BLAS_LAPACK_LIBS}
