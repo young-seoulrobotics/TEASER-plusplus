@@ -12,7 +12,7 @@ if (NOT pmc_POPULATED)
   add_subdirectory(${pmc_SOURCE_DIR} ${pmc_BINARY_DIR} EXCLUDE_FROM_ALL)
 endif()
 
-if (TEASERPP_USE_EXTERNAL_TINPLY)
+if (NOT TEASERPP_USE_EXTERNAL_TINPLY)
     FetchContent_Declare(tinyply
         GIT_REPOSITORY https://github.com/ddiakopoulos/tinyply.git
         BUILD_COMMAND ""
