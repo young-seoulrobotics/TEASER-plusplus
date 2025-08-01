@@ -26,6 +26,7 @@ option(BUILD_DOC "Build documentation" ON)
 option(BUILD_WITH_MARCH_NATIVE "Build with flag march=native" OFF)
 option(ENABLE_MKL "Try to use Eigen with MKL" OFF)
 option(ENABLE_DIAGNOSTIC_PRINT "Enable printing of diagnostic messages" ON)
+option(TEASERPP_USE_EXTERNAL_TINPLY "Use an external tinyply library instead of the internal one." OFF)
 
 if (ENABLE_DIAGNOSTIC_PRINT)
     message(STATUS "Enable printing of diagnostic messages.")
@@ -100,15 +101,22 @@ FetchContent_Declare(
 FetchContent_MakeAvailable(pmc)
 
 # tinyply
-configure_file(cmake/tinyply.CMakeLists.txt.in tinyply-download/CMakeLists.txt)
-execute_process(COMMAND "${CMAKE_COMMAND}" -G "${CMAKE_GENERATOR}" .
-        WORKING_DIRECTORY "${CMAKE_BINARY_DIR}/tinyply-download")
-execute_process(COMMAND "${CMAKE_COMMAND}" --build .
-        WORKING_DIRECTORY "${CMAKE_BINARY_DIR}/tinyply-download")
-add_subdirectory("${CMAKE_BINARY_DIR}/tinyply-src"
-        "${CMAKE_BINARY_DIR}/tinyply-build")
-target_include_directories(tinyply PUBLIC
-        $<BUILD_INTERFACE:${CMAKE_BINARY_DIR}/tinyply-src/source>)
+if(NOT TEASERPP_USE_EXTERNAL_TINPLY)
+    message(STATUS "Using internal tinyply build.")
+    configure_file(cmake/tinyply.CMakeLists.txt.in tinyply-download/CMakeLists.txt)
+    execute_process(COMMAND "${CMAKE_COMMAND}" -G "${CMAKE_GENERATOR}" .
+            WORKING_DIRECTORY "${CMAKE_BINARY_DIR}/tinyply-download")
+    execute_process(COMMAND "${CMAKE_COMMAND}" --build .
+            WORKING_DIRECTORY "${CMAKE_BINARY_DIR}/tinyply-download")
+    add_subdirectory("${CMAKE_BINARY_DIR}/tinyply-src"
+            "${CMAKE_BINARY_DIR}/tinyply-build")
+    target_include_directories(tinyply PUBLIC
+            $<BUILD_INTERFACE:${CMAKE_BINARY_DIR}/tinyply-src/source>)
+else()
+    # Find the tinyply provided by the parent project.
+    message(STATUS "Looking for external tinyply library.")
+    find_package(tinyply REQUIRED)
+endif()
 
 # spectra
 configure_file(cmake/spectra.CMakeLists.txt.in spectra-download/CMakeLists.txt)
